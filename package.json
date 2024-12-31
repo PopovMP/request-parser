@@ -1,9 +1,10 @@
 {
   "name": "@popovmp/request-parser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Request parsing helper",
   "main": "index.mjs",
   "type": "module",
+  "types": "types/index.d.ts",
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.17.0",
