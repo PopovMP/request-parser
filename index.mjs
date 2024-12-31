@@ -2,6 +2,7 @@ import {TextDecoder} from "node:util";
 
 /**
  * Parses the path returns the path params or null if the path does not matches the template.
+ *
  * @param {string} path
  * @param {string} template - URL template. It can use parameters designated with ":"
  *   supported tags:
@@ -10,13 +11,13 @@ import {TextDecoder} from "node:util";
  *     "d:" - digits
  *     "b:" - boolean
  *     "*:" - any except "/". It decodes the parameter to a string.
- * @returns {Record<string, string|number|boolean|null|Date>|null}
+ * @returns {Record<string, string|number|boolean> | null}
  * @throws {Error}    - Thrown if the template flag is not supported.
  * @throws {URIError} - Thrown if encodedURI contains a % not followed by two hexadecimal digits,
  *                        or if the escape sequence does not encode a valid UTF-8 character.
  */
 export function parsePathParams(path, template) {
-    /** @type { Record<string, string|number|boolean|null|Date> } */
+    /** @type { Record<string, string|number|boolean> } */
     const params = {};
 
     /** @type {string[]} */
@@ -44,6 +45,7 @@ export function parsePathParams(path, template) {
 
         /** @type {string} */
         const paramFlag = templatePart.slice(0, colonIndex + 1);
+
         /** @type {string} */
         const key = templatePart.slice(colonIndex + 1);
 
