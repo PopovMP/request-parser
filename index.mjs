@@ -114,25 +114,15 @@ export function parseQueryParams(queryText) {
  * It parses the body based on the Content-Type header.
  * @param {Buffer} body
  * @param {string} contentType
- * @returns {Buffer|string|Object|null|undefined}
+ * @returns {Buffer|string|any|undefined}
  * @throws {Error}       - Thrown if the Content-Type header is missing or unsupported.
  * @throws {SyntaxError} - Thrown if the body is not a valid JSON.
  */
 export function parseRequestBody(body, contentType) {
     if (body.length === 0) return; // Empty body
 
-    if (contentType.startsWith("application/octet-stream") ||
-        contentType.startsWith("application/zip") ||
-        contentType.startsWith("application/gzip")) {
-        return body;
-    }
-
-    if (contentType.startsWith("text/plain") ||
-        contentType.startsWith("text/html")) {
-        return new TextDecoder().decode(body);
-    }
-
     if (contentType.startsWith("application/json")) {
+        /** @type {string} */
         const bodyText = new TextDecoder().decode(body);
         return JSON.parse(bodyText);
     }
@@ -143,7 +133,11 @@ export function parseRequestBody(body, contentType) {
         return parseFormData(bodyText);
     }
 
-    throw new Error(`Unsupported Content-Type: ${contentType}`);
+    if (contentType.startsWith("text")) {
+        return new TextDecoder().decode(body);
+    }
+
+    return body;
 }
 
 /**
