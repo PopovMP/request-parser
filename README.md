@@ -8,6 +8,14 @@ Helper functions to parse and validate request data.
 
 It matches the URL path with a template and returns the path parameters.
 
+Supported types:
+ - `:`    - alphanumeric, "-" and "_"
+ - `w:`   - alphanumeric and "_" (word characters)
+ - `d:`   - digits
+ - `b:`   - boolean
+ - `b64:` - base64
+ - `*:`   - any except "/". It decodes the parameter to a string.
+
 ```javascript
 import {parsePathParams} from "@popovmp/request-parser";
 

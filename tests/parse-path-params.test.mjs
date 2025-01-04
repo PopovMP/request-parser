@@ -4,6 +4,7 @@ import {describe, it}     from "node:test";
 import {deepStrictEqual}  from "node:assert";
 
 import {parsePathParams} from "../index.mjs";
+import {stringToBase64Url} from "@popovmp/base64";
 
 describe("parsePathParams", () => {
     describe("path without parameters", () => {
@@ -56,6 +57,18 @@ describe("parsePathParams", () => {
             const template = "/api/w:foo/w:bar";
             const actual   = parsePathParams(path, template);
             const expected = null;
+            deepStrictEqual(actual, expected);
+        });
+    });
+
+    describe("mach base64 text 'b64:'", () => {
+        it("path matches", async () => {
+            const text    = "Здравей, Свят!";
+            const textB64  = stringToBase64Url(text);
+            const path     = `/api/${textB64}/42`;
+            const template = "/api/b64:hello/42";
+            const actual   = parsePathParams(path, template);
+            const expected = {hello: text};
             deepStrictEqual(actual, expected);
         });
     });

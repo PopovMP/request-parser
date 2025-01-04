@@ -1,4 +1,5 @@
 import {TextDecoder} from "node:util";
+import {base64UrlToString} from "@popovmp/base64";
 
 /**
  * Parses the path returns the path params or null if the path does not matches the template.
@@ -6,11 +7,12 @@ import {TextDecoder} from "node:util";
  * @param {string} path
  * @param {string} template - URL template. It can use parameters designated with ":"
  *   supported tags:
- *     ":"  - alphanumeric, "-" and "_"
- *     "w:" - alphanumeric and "_" (word characters)
- *     "d:" - digits
- *     "b:" - boolean
- *     "*:" - any except "/". It decodes the parameter to a string.
+ *     ":"    - alphanumeric, "-" and "_"
+ *     "w:"   - alphanumeric and "_" (word characters)
+ *     "d:"   - digits
+ *     "b:"   - boolean
+ *     "b64:" - base64
+ *     "*:"   - any except "/". It decodes the parameter to a string.
  * @returns {Record<string, string|number|boolean> | null}
  * @throws {Error}    - Thrown if the template flag is not supported.
  * @throws {URIError} - Thrown if encodedURI contains a % not followed by two hexadecimal digits,
@@ -82,12 +84,16 @@ export function parsePathParams(path, template) {
                 }
                 return null;
             }
-            case "*:": { // Any except "/"
-                if (!pathPart.includes("/")) {
-                    params[key] = decodeURIComponent(pathPart);
+            case "b64:": { // Base64
+                if (/^[\w-]+$/.test(pathPart)) {
+                    params[key] = base64UrlToString(pathPart);
                     break;
                 }
                 return null;
+            }
+            case "*:": { // Any except "/"
+                params[key] = decodeURIComponent(pathPart);
+                break;
             }
             default: {
                 throw new Error(`Unsupported template flag: ${paramFlag}`);
